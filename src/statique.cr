@@ -2,17 +2,21 @@ require "./statique/*"
 require "kemal"
 require "base64"
 
+if ENV["WEBHOOK_PATH"]?
+  config_dir = "/repo/config/" as String
+else
+  config_dir = "./config/" as String
+end
+
+add_handler Kemal::Logger.new
+add_handler HookHandler.new("WEBHOOK_PATH")
+add_handler AuthenticationHandler.new(config_dir)
+add_handler AuthorizationHandler.new(config_dir)
+add_handler FullStaticFileHandler.new("./public")
+
 
 module Statique
-  #basic_auth "username", "password"
-  # Matches GET "http://host:port/"
-  FREE_URLS = ["/zefkenfjebkaenfanfeanf3rmk3nrk3nj3", "/hello"]
-
-  get "/hello" do
+  get "/hello123" do
     "hello"
   end
-
-  #get "/zefkenfjebkaenfanfeanf3rmk3nrk3nj3" do
-  #  start_build
-  #end
 end

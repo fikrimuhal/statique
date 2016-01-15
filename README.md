@@ -3,6 +3,7 @@
 Statique is a static file server written with [Crystal language](http://crystal-lang.org/) and [Kemal Web Framework](http://www.kemalcr.com/).
 It pulls [Hugo](https://gohugo.io/) site from a git repository, builds it and then serves as static site.
 It provides a hook URL so that it can fetch and rebuild the Markdown files of Hugo project.
+Each folder can be assigned special permissions.
 
 ## Installation
 
