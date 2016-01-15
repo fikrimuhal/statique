@@ -1,4 +1,3 @@
-
 def is_running?(program : String)
   value = Process.run("ps", ["aux"]) do |proc|
     txt = proc.output.gets_to_end

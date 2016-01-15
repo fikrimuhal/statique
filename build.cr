@@ -1,4 +1,3 @@
-
 require "http"
 require "logger"
 require "colorize"
@@ -6,22 +5,22 @@ require "colorize"
 log = Logger.new(STDOUT)
 log.level = Logger::INFO
 
-APP_LOCATION = __DIR__
-APP_PUBLIC = APP_LOCATION + "/public"
+APP_LOCATION    = __DIR__
+APP_PUBLIC      = APP_LOCATION + "/public"
 PRIVATE_KEY_URL = ENV["PRIVTE_KEY_URL"]? ? ENV["PRIVTE_KEY_URL"] as String : ""
-PUBLIC_KEY_URL = ENV["PUBLIC_KEY_URL"]? ? ENV["PUBLIC_KEY_URL"] as String : ""
-ENV_GIT_REPO = ENV["GIT_REPO"]?
+PUBLIC_KEY_URL  = ENV["PUBLIC_KEY_URL"]? ? ENV["PUBLIC_KEY_URL"] as String : ""
+ENV_GIT_REPO    = ENV["GIT_REPO"]?
 
 log.info("App location: #{APP_LOCATION}")
 
 unless ENV_GIT_REPO
   log.warn("No Git repo path provided with GIT_REPO environment variable.".colorize(:red))
-  git_repo="https://github.com/fikrimuhal/hugo-sample"
-  gitdir_path="/tmp/git_repo"
+  git_repo = "https://github.com/fikrimuhal/hugo-sample"
+  gitdir_path = "/tmp/git_repo"
   log.info("Default git repo: #{git_repo}, will download to #{gitdir_path}")
 else
   git_repo = ENV_GIT_REPO
-  gitdir_path="/repo"
+  gitdir_path = "/repo"
   log.info("Git repo: #{git_repo}, will download to #{gitdir_path}")
 
   unless File.exists?("/root/.ssh/id_rsa")
@@ -55,7 +54,6 @@ else
   Process.run("rm", ["-rf", APP_PUBLIC])
   Process.run("cp", ["-rf", "public", APP_PUBLIC], chdir: gitdir_path)
   Process.run("cp", ["-rf", "config", File.join(APP_LOCATION, "config")], chdir: gitdir_path)
-
 
   log.info("Build complete...".colorize(:green))
 end

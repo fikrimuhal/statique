@@ -14,7 +14,6 @@ add_handler AuthenticationHandler.new(config_dir)
 add_handler AuthorizationHandler.new(config_dir)
 add_handler FullStaticFileHandler.new("./public")
 
-
 module Statique
   get "/hello123" do
     "hello"
