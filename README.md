@@ -1,15 +1,10 @@
-# statique
+# Statique - Static Site Server
 
-* Statique is a static file server written with [Crystal language](http://crystal-lang.org/) and [Kemal Web Framework](http://www.kemalcr.com/).
-
+* Statique is a static site server written with [Crystal language](http://crystal-lang.org/) and [Kemal Web Framework](http://www.kemalcr.com/).
 * It pulls a [Hugo](https://gohugo.io/) site from a git repository, builds it and then serves as a static site.
-
 * It provides a hook URL so that it can fetch and rebuild the Markdown files of Hugo project upon git push.
-
 * Access can be restricted with passwords and permissions.
-
 * Each folder can be assigned special permissions via files in config folder.
-
 * Sample Hugo site source code can be found [here](https://github.com/fikrimuhal/hugo-sample).
 
 ## Installation
@@ -56,7 +51,7 @@ crystal build.cr
 crystal src/statique.cr
 ```
 
-Navigate to http://localhost:3000 to see the result. You can use admin:admin password to access all the site.
+Navigate to [http://localhost:3000](http://localhost:3000) to see the result. You can use admin:admin password to access all the site.
 
 
 ## TODO
