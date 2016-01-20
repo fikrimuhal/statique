@@ -7,7 +7,6 @@ class AuthenticationHandler < HTTP::Handler
   AUTH  = "Authorization"
 
   def initialize(@config_dir = "./config")
-    @logger = Kemal::Logger.new
     @passwords_file = File.join(@config_dir, "passwords.txt")
   end
 

@@ -2,58 +2,34 @@ require "http"
 require "logger"
 require "colorize"
 
+APP_LOCATION = __DIR__
+APP_PUBLIC   = File.join(APP_LOCATION, "/public")
+BUILT_PUBLIC = "/tmp/hugo-public"
+DROPBOX_PATH = File.join(ENV["HOME"], "Dropbox")
+# If you want to use root folder, use empty string.
+DOCS_REL_PATH = ENV["DROPBOX_DOCS_REL_PATH"]? ? ENV["DROPBOX_DOCS_REL_PATH"] as String : "/"
+DOCS_PATH     = File.join(DROPBOX_PATH, DOCS_REL_PATH)
+DOCS_MAKE     = File.join(DOCS_PATH, "/Makefile")
+
 log = Logger.new(STDOUT)
 log.level = Logger::INFO
+log.info("App path: #{APP_LOCATION}")
+log.info("Dropbox path: #{DROPBOX_PATH}")
+log.info("Docs relative path: #{DOCS_PATH}")
+log.info("Makefile path: #{DOCS_MAKE}")
 
-APP_LOCATION    = __DIR__
-APP_PUBLIC      = APP_LOCATION + "/public"
-PRIVATE_KEY_URL = ENV["PRIVTE_KEY_URL"]? ? ENV["PRIVTE_KEY_URL"] as String : ""
-PUBLIC_KEY_URL  = ENV["PUBLIC_KEY_URL"]? ? ENV["PUBLIC_KEY_URL"] as String : ""
-ENV_GIT_REPO    = ENV["GIT_REPO"]?
-
-log.info("App location: #{APP_LOCATION}")
-
-unless ENV_GIT_REPO
-  log.warn("No Git repo path provided with GIT_REPO environment variable.".colorize(:red))
-  git_repo = "https://github.com/fikrimuhal/hugo-sample"
-  gitdir_path = "/tmp/git_repo"
-  log.info("Default git repo: #{git_repo}, will download to #{gitdir_path}")
-else
-  git_repo = ENV_GIT_REPO
-  gitdir_path = "/repo"
-  log.info("Git repo: #{git_repo}, will download to #{gitdir_path}")
-
-  unless File.exists?("/root/.ssh/id_rsa")
-    log.info("No SSH Key exists, now downloading them...")
-    Process.run("mkdir", ["/root/.ssh"])
-    private_key = HTTP::Client.get(PRIVATE_KEY_URL).body
-    public_key = HTTP::Client.get(PUBLIC_KEY_URL).body
-    File.write("/root/.ssh/id_rsa", private_key)
-    File.write("/root/.ssh/id_rsa.pub", public_key)
-    Process.run("chmod", ["600", "/root/.ssh/id_rsa", "/root/.ssh/id_rsa.pub"])
-    File.open("/etc/ssh/ssh_config", "a") do |file|
-      "StrictHostKeyChecking no".to_s file
-    end
-  end
+unless File.exists?(DROPBOX_PATH)
+  log.error("Dropbox folder does not exist. Make sure you have installed Dropbox.")
 end
 
-if File.exists?(gitdir_path)
-  log.info("Repo found, updating...")
-  Process.run("make", ["clean"], chdir: gitdir_path)
-  Process.run("git", ["checkout", "--", "."], chdir: gitdir_path)
-  Process.run("git", ["pull"], chdir: gitdir_path)
-  Process.run("make", ["html"], chdir: gitdir_path)
+if File.exists?(DOCS_MAKE)
+  log.info("Makefile in Dropbox folder found, updating...")
+  Process.run("make", ["clean"], chdir: DOCS_PATH)
+  Process.run("make", ["html"], chdir: DOCS_PATH)
   Process.run("rm", ["-rf", APP_PUBLIC])
-  Process.run("cp", ["-rf", "public", APP_PUBLIC], chdir: gitdir_path)
-  Process.run("cp", ["-rf", "config", File.join(APP_LOCATION, "config")], chdir: gitdir_path)
-  log.info("Update complete.".colorize(:green))
+  Process.run("cp", ["-rf", BUILT_PUBLIC, APP_PUBLIC], chdir: DOCS_PATH)
+  Process.run("cp", ["-rf", "config", File.join(APP_LOCATION, "config")], chdir: DOCS_PATH)
+  log.info("Build complete. Output is on #{BUILT_PUBLIC}".colorize(:green))
 else
-  log.info("Repo not found, cloning...")
-  Process.run("git", ["clone", git_repo as String, gitdir_path as String])
-  Process.run("make", ["html"], chdir: gitdir_path)
-  Process.run("rm", ["-rf", APP_PUBLIC])
-  Process.run("cp", ["-rf", "public", APP_PUBLIC], chdir: gitdir_path)
-  Process.run("cp", ["-rf", "config", File.join(APP_LOCATION, "config")], chdir: gitdir_path)
-
-  log.info("Build complete...".colorize(:green))
+  log.info("Makefile in Dropbox folder not found. Please provide Makefile.")
 end

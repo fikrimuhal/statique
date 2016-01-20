@@ -1,0 +1,9 @@
+statique-dropbox:
+  build: .
+  container_name: statique-dropbox
+  command: sh start.sh
+  environment:
+    WEBHOOK_PATH: /abcdef
+    DROPBOX_DOCS_REL_PATH: "/docs"
+  ports:
+    - "3000:3000"

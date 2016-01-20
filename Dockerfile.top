@@ -1,0 +1,8 @@
+FROM fikrimuhal/statique-dropbox-base
+
+# Build app
+ADD . /app
+RUN cd /app && shards install && crystal build src/statique.cr -o /app/statique.bin --release && crystal build build.cr -o /app/build.bin --release
+
+WORKDIR "/app"
+CMD ["sh", "start.sh"]
