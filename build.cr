@@ -2,15 +2,16 @@ require "http"
 require "logger"
 require "colorize"
 
-log = Logger.new(STDOUT)
-log.level = Logger::INFO
 
 APP_LOCATION    = __DIR__
-APP_PUBLIC      = APP_LOCATION + "/public"
+APP_PUBLIC      = File.join(APP_LOCATION, "/public")
+BUILT_PUBLIC    = "/tmp/hugo-public"
 PRIVATE_KEY_URL = ENV["PRIVTE_KEY_URL"]? ? ENV["PRIVTE_KEY_URL"] as String : ""
 PUBLIC_KEY_URL  = ENV["PUBLIC_KEY_URL"]? ? ENV["PUBLIC_KEY_URL"] as String : ""
 ENV_GIT_REPO    = ENV["GIT_REPO"]?
 
+log = Logger.new(STDOUT)
+log.level = Logger::INFO
 log.info("App location: #{APP_LOCATION}")
 
 unless ENV_GIT_REPO
@@ -44,7 +45,7 @@ if File.exists?(gitdir_path)
   Process.run("git", ["pull"], chdir: gitdir_path)
   Process.run("make", ["html"], chdir: gitdir_path)
   Process.run("rm", ["-rf", APP_PUBLIC])
-  Process.run("cp", ["-rf", "public", APP_PUBLIC], chdir: gitdir_path)
+  Process.run("cp", ["-rf", BUILT_PUBLIC, APP_PUBLIC], chdir: gitdir_path)
   Process.run("cp", ["-rf", "config", File.join(APP_LOCATION, "config")], chdir: gitdir_path)
   log.info("Update complete.".colorize(:green))
 else
@@ -52,7 +53,7 @@ else
   Process.run("git", ["clone", git_repo as String, gitdir_path as String])
   Process.run("make", ["html"], chdir: gitdir_path)
   Process.run("rm", ["-rf", APP_PUBLIC])
-  Process.run("cp", ["-rf", "public", APP_PUBLIC], chdir: gitdir_path)
+  Process.run("cp", ["-rf", BUILT_PUBLIC, APP_PUBLIC], chdir: gitdir_path)
   Process.run("cp", ["-rf", "config", File.join(APP_LOCATION, "config")], chdir: gitdir_path)
 
   log.info("Build complete...".colorize(:green))
