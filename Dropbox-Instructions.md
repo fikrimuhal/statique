@@ -11,12 +11,6 @@ docker build -t fikrimuhal/statique-dropbox -f Dockerfile.top .
 docker run -d --name statique-dropbox -e WEBHOOK_PATH="/abcd" -e DROPBOX_DOCS_REL_PATH="/docs" -p 3000:3000 fikrimuhal/statique-dropbox
 ```
 
-Then we will attach to the running container to setup Dropbox.
-```bash
-docker exec -it $(docker ps | grep -m 1 statique-dropbox | cut -d " " -f 1) /bin/bash
-cd /root/.dropbox-dist && ./dropboxd &
-```
-
 * Navigate to the link to link your dropbox.
 * Exclude folders you don't want to sync.
 ```bash
