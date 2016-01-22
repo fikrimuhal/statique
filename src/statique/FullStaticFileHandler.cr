@@ -10,6 +10,8 @@ class FullStaticFileHandler < HTTP::StaticFileHandler
     if request_path[-1] == '/'
       static_path = @publicdir + request_path + "index.html"
     elsif !request_path.ends_with?(".html")
+      # TODO: Other extensions will be discarded.
+      # TODO: if doesn't have an extension, redirect to url with / at the end if there exists that folder.
       static_path = @publicdir + request_path + "/" + "index.html"
     else
       static_path = @publicdir + request_path
