@@ -46,7 +46,7 @@ if File.exists?(HUGO_MAKEFILE)
   Process.run("make", ["html"], chdir: HUGO_PATH)
   Process.run("rm", ["-rf", APP_PUBLIC])
   Process.run("cp", ["-rf", BUILT_PUBLIC, APP_PUBLIC])
-  Process.run("cp", ["-rf", "config", File.join(APP_LOCATION, "config")], chdir: HUGO_PATH)
+  Process.run("cp", ["-rf", "config", APP_LOCATION], chdir: HUGO_PATH)
   log.info("Build complete. Output is on #{BUILT_PUBLIC}".colorize(:green))
 else
   log.info("Makefile in Dropbox hugo-skeleton folder not found. Please provide Makefile.")

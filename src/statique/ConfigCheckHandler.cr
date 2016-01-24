@@ -6,7 +6,12 @@ class ConfigCheckHandler < HTTP::Handler
   end
 
   def call(request)
-    unless File.exists?(@config_dir)
+    passwords = File.join(@config_dir, "passwords.txt")
+    permissions = File.join(@config_dir, "permissions.yml")
+
+    proper? = File.exists?(@config_dir) && File.exists?(passwords) && File.exists?(permissions)
+
+    unless proper?
       config_dir = @config_dir
       @logger.write("#{config_dir} does not exist. Make proper setup.")
       return HTTP::Response.new(500, "#{config_dir} does not exist. Make proper setup.")
