@@ -7,8 +7,8 @@ class AuthorizationHandler < HTTP::Handler
   AUTH  = "Authorization"
 
   def initialize(@config_dir = "./config")
-    @permissions_file = @config_dir + "permissions.yml"
-    @free_url_file = @config_dir + "free.txt"
+    @permissions_file = File.join(@config_dir, "permissions.yml")
+    @free_url_file = File.join(@config_dir, "free.txt")
     # super
   end
 

@@ -7,14 +7,15 @@ class FullStaticFileHandler < HTTP::StaticFileHandler
   end
 
   def get_static_path(request_path)
-    if request_path[-1] == '/'
+    puts request_path
+    if request_path[-1] == '/' # || request_path.size > 1 && request_path[-1] == "/"
       static_path = @publicdir + request_path + "index.html"
     elsif !request_path.ends_with?(".html")
       # TODO: Other extensions will be discarded.
       # TODO: if doesn't have an extension, redirect to url with / at the end if there exists that folder.
-      static_path = @publicdir + request_path + "/" + "index.html"
+      static_path = File.join(@publicdir, request_path, "index.html")
     else
-      static_path = @publicdir + request_path
+      static_path = File.join(@publicdir, request_path)
     end
     return static_path
   end

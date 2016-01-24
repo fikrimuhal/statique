@@ -2,7 +2,7 @@ require "./statique/*"
 require "kemal"
 require "base64"
 
-config_dir = "/tmp/hugo/config/"
+config_dir = "./config"
 
 add_handler Kemal::Logger.new
 add_handler HookHandler.new("WEBHOOK_PATH")
