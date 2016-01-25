@@ -7,7 +7,7 @@ class FullStaticFileHandler < HTTP::StaticFileHandler
   end
 
   def get_static_path(request_path)
-    puts request_path
+    #request_path = request_path.sub("%20", "-").sub(" ", "-")
     if request_path[-1] == '/' # || request_path.size > 1 && request_path[-1] == "/"
       static_path = @publicdir + request_path + "index.html"
     elsif !request_path.ends_with?(".html")
