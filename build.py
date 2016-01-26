@@ -5,42 +5,40 @@ import urllib2
 import time
 
 APP_LOCATION=os.path.dirname(os.path.abspath(__file__))
-APP_PUBLIC="%s/public" % APP_LOCATION
+APP_PUBLIC=os.path.join(APP_LOCATION, "public")
+BUILT_PUBLIC = "/tmp/hugo-public"
+DROPBOX_PATH = os.path.join(os.environ.get("HOME"), "Dropbox")
+HUGO_SKEL_PATH = os.path.join(DROPBOX_PATH, "hugo-skeleton")
+HUGO_PATH = "/tmp/hugo"
+HUGO_CONTENT_PATH = os.path.join(HUGO_PATH, "content")
+HUGO_MAKEFILE = os.path.join(HUGO_PATH, "Makefile")
 
+print("App path: %s" % APP_LOCATION)
+print("Dropbox path: %s" % DROPBOX_PATH)
+print("Makefile path: %s" % HUGO_MAKEFILE)
 
-ENV_GIT_REPO = os.environ.get("GIT_REPO")
-if not ENV_GIT_REPO:
-    GIT_REPO="https://github.com/fikrimuhal/hugo-sample"
-    GITDIR_PATH="/tmp/git_repo"
+if not os.path.exists(DROPBOX_PATH):
+    print("Dropbox folder does not exists. ")
+    system.exit(-1)
+
+os.system("rm -rf %(HUGO_PATH)s && cp -rf %(HUGO_SKEL_PATH)s %(HUGO_PATH)s" % locals() )
+os.mkdir(HUGO_CONTENT_PATH)
+def copy_dropbox_hugo_content(path):
+    path = path.strip()
+    if path:
+        from_path = os.path.join(DROPBOX_PATH, path)
+        to_path = os.path.join(HUGO_CONTENT_PATH, path)
+        os.system("cp -rf \"%s\" \"%s\"" % (from_path, to_path))
+
+include_paths = os.path.join(HUGO_PATH, "config", "include.txt")
+paths = open(include_paths).read().split("\n")
+for path in paths:
+    copy_dropbox_hugo_content(path)
+copy_dropbox_hugo_content("_index.md")
+
+if os.path.exists(HUGO_MAKEFILE):
+    print("Makefile found, building...")
+    os.system("cd %(HUGO_PATH)s && make clean && make html && rm -rf %(APP_PUBLIC)s && cp -rf %(BUILT_PUBLIC)s %(APP_PUBLIC)s && cp -rf config %(APP_LOCATION)s" % locals())
+    print("Build complete. Output is on %s" % BUILT_PUBLIC)
 else:
-    GIT_REPO = ENV_GIT_REPO
-    GITDIR_PATH="/repo"
-
-    PRIVATE_KEY_URL=os.environ.get("PUBLIC_KEY_URL")
-    PUBLIC_KEY_URL=os.environ.get("PRIVATE_KEY_URL")
-    if not os.path.exists("/root/.ssh/id_rsa"):
-        os.mkdir("/root/.ssh")
-        private_key = urllib2.urlopen(PRIVATE_KEY_URL).read()
-        public_key = urllib2.urlopen(PUBLIC_KEY_URL).read()
-        f = open("/root/.ssh/id_rsa", "w")
-        f.write(private_key)
-        f.close()
-        f = open("/root/.ssh/id_rsa.pub", "w")
-        f.write(public_key)
-        f.close()
-        os.system("chmod 600 /root/.ssh/id_rsa")
-        os.system("chmod 600 /root/.ssh/id_rsa.pub")
-        os.system('echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config')
-        time.sleep(1)
-
-
-if os.path.exists(GITDIR_PATH):
-    # update
-    print "Repo found, updating..."
-    os.system("cd %(GITDIR_PATH)s && make clean && git checkout -- . && git pull && make html && rm -rf %(APP_PUBLIC)s && cp -rf public %(APP_PUBLIC)s && cp -rf config %(APP_LOCATION)s/config"" % locals())
-    #os.system("cd %(GITDIR_PATH)s && git checkout -- . && git pull && hyde gen && rm -rf %(APP_PUBLIC)s && cp -rf deploy %(APP_PUBLIC)s" % locals())
-else:
-    print "Repo not found, cloning..."
-    os.system("git clone %(GIT_REPO)s %(GITDIR_PATH)s && cd %(GITDIR_PATH)s && make html && rm -rf %(APP_PUBLIC)s && cp -rf public %(APP_PUBLIC)s && cp -rf config %(APP_LOCATION)s/config" % locals())
-
-    #os.system("git clone %(GIT_REPO)s %(GITDIR_PATH)s && cd %(GITDIR_PATH)s && hyde gen && rm -rf %(APP_PUBLIC)s && cp -rf deploy %(APP_PUBLIC)s" % locals())
+    print("Makefile not found.")
