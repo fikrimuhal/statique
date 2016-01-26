@@ -12,7 +12,7 @@ build_after_uptodate() {
   done
   # When it is fully synced, start build.
   echo "Build now!"
-  /app/build.bin
+  python /app/build.py
 }
 
 WATCHFOR=/root/Dropbox${DROPBOX_DOCS_REL_PATH:-}
