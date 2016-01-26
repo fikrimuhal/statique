@@ -22,7 +22,10 @@ if not os.path.exists(DROPBOX_PATH):
     system.exit(-1)
 
 os.system("rm -rf %(HUGO_PATH)s && cp -rf %(HUGO_SKEL_PATH)s %(HUGO_PATH)s" % locals() )
-os.mkdir(HUGO_CONTENT_PATH)
+
+if not os.path.exists(HUGO_CONTENT_PATH):
+    os.mkdir(HUGO_CONTENT_PATH)
+
 def copy_dropbox_hugo_content(path):
     path = path.strip()
     if path:
