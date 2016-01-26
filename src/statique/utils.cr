@@ -7,8 +7,8 @@ def is_running?(program : String)
 end
 
 def start_build
-  unless is_running?("build.bin")
-    Process.new("/app/build.bin")
+  unless is_running?("build.py")
+    Process.new("python /app/build.py")
     return HTTP::Response.new(202, "Build process started... Please check back later.")
   else
     return HTTP::Response.new(409, "A build process is already active. Did not start a new build.")
