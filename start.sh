@@ -1,5 +1,6 @@
 #!/bin/bash
 
 nohup sh inotifyrun.sh &
-cd /root/.dropbox-dist && ./dropboxd &
-/app/statique.bin
+#cd ~/.dropbox-dist && ./dropboxd &
+python ~/dropbox.py start
+statique.bin

@@ -2,7 +2,7 @@
 
 uptodate () {
   # returns 1 if up to date, 0 otherwise.
-  python /root/dropbox.py status | grep "Up to date" |wc -l
+  python $HOME/dropbox.py status | grep "Up to date" |wc -l
 }
 
 build_after_uptodate() {
@@ -12,10 +12,10 @@ build_after_uptodate() {
   done
   # When it is fully synced, start build.
   echo "Build now!"
-  python /app/build.py
+  python build.py
 }
 
-WATCHFOR=/root/Dropbox${DROPBOX_DOCS_REL_PATH:-}
+WATCHFOR=$HOME/Dropbox${DROPBOX_DOCS_REL_PATH:-}
 
 while true #run indefinitely
 do

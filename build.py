@@ -41,7 +41,7 @@ copy_dropbox_hugo_content("_index.md")
 
 if os.path.exists(HUGO_MAKEFILE):
     print("Makefile found, building...")
-    os.system("cd %(HUGO_PATH)s && make clean && make html && rm -rf %(APP_PUBLIC)s && cp -rf %(BUILT_PUBLIC)s %(APP_PUBLIC)s && cp -rf config %(APP_LOCATION)s" % locals())
+    os.system("cd %(HUGO_PATH)s && make clean && make html || rm -rf %(APP_PUBLIC)s && cp -rf %(BUILT_PUBLIC)s %(APP_PUBLIC)s && cp -rf config %(APP_LOCATION)s" % locals())
     print("Build complete. Output is on %s" % BUILT_PUBLIC)
 else:
     print("Makefile not found.")
