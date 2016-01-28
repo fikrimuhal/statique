@@ -35,7 +35,7 @@ def generate_breadcrumb(path):
     o = '<ol class="breadcrumb" style="margin-bottom: 5px;">\n'
     for i in xrange(0, len(parts)-1):
         o += '<li><a href="%s">%s</a></li>\n' % ("/"+"/".join(parts[0:i+1]), parts[i])
-    o += '<li class="active"><a href="%s">%s</a></li>' % (path, parts[-1])
+    o += '<li class="active"><a href="/%s">%s</a></li>' % (path, parts[-1])
     o += '</ol>'
     return o
 

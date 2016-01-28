@@ -4,7 +4,13 @@ import os
 import urllib2
 import time
 import subprocess
+import sys
 from generate_index import *
+
+res = filter(lambda x: "python build.py" in x and int(x.split()[1]) < os.getpid(), os.popen("ps aux | grep build").readlines())
+if res:
+    print("Another build is in progress. Won't start a new one.")
+    sys.exit(-1)
 
 APP_LOCATION=os.path.dirname(os.path.abspath(__file__))
 APP_PUBLIC=os.path.join(APP_LOCATION, "public")
@@ -50,7 +56,7 @@ subprocess.call(["cp", "-rf", os.path.join(HUGO_SKEL_PATH, "template.html"), os.
 generate_indices()
 
 subprocess.call(["rm","-rf", APP_PUBLIC, APP_CONFIG_PATH])
-subprocess.call(["cp","-rf", HUGO_CONTENT_PATH, APP_PUBLIC])
-subprocess.call(["cp","-rf", HUGO_CONFIG_PATH, APP_CONFIG_PATH])
+subprocess.call(["mv", HUGO_CONTENT_PATH, APP_PUBLIC])
+subprocess.call(["mv", HUGO_CONFIG_PATH, APP_CONFIG_PATH])
 
 print("Build complete. Output is on %s" % BUILT_PUBLIC)
