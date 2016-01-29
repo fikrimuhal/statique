@@ -11,9 +11,23 @@ build_after_uptodate() {
     sleep 1
   done
   # When it is fully synced, start build.
+  if [ -f $HOME/Dropbox/statique/build.py ]; then
+    cp $HOME/Dropbox/statique/build.py .
+  elif [ -f ./templates/build.py ]; then
+    cp ./templates/build.py .
+  fi
+
+  if [ -f $HOME/Dropbox/statique/generate_index.py ]; then
+    cp $HOME/Dropbox/statique/generate_index.py .
+  elif [ -f ./templates/generate_index.py ]; then
+    cp ./templates/generate_index.py .
+  fi
+
   echo "Starting build..."
   python build.py
 }
+
+build_after_uptodate
 
 WATCHFOR=$HOME/Dropbox${DROPBOX_DOCS_REL_PATH:-}
 
