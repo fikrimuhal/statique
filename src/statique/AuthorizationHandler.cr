@@ -47,6 +47,8 @@ class AuthorizationHandler < HTTP::Handler
   end
 
   def authorized?(path : String, username : String)
+    return true if path == "/"
+
     permissions = YAML.load(File.read(@permissions_file as String)) as Hash
     items = path.split("/")
     items[0] = "root"
@@ -57,7 +59,8 @@ class AuthorizationHandler < HTTP::Handler
   # if the user has the permission to see the page, show it.
   # else 403.
   def call(request)
-    request_path = request.path.not_nil!
+    request_path = request.path.not_nil!.gsub("%20"," ")
+    request.path = request_path
     value = request.headers[AUTH]?
     # value.try &.size
     if value && value.size > 0 && value.starts_with?(BASIC)
