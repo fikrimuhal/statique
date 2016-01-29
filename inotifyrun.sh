@@ -12,8 +12,11 @@ build_after_uptodate() {
   done
   # When it is fully synced, start build.
 
-  DROPBOX_BUILD=$HOME/Dropbox/statique/build.py
-  DEFAULT_BUILD=./defaults/build.py
+  DROPBOX_STATIQUE=$HOME/Dropbox/statique
+  DEFAULT_FOLDER=./sample_dropbox_folder/statique
+
+  DROPBOX_BUILD=$DROPBOX_STATIQUE/build.py
+  DEFAULT_BUILD=$DEFAULT_FOLDER/build.py
 
   if [ -f $DROPBOX_BUILD ]; then
     cp $DROPBOX_BUILD .
@@ -21,8 +24,8 @@ build_after_uptodate() {
     cp $DEFAULT_BUILD .
   fi
 
-  DROPBOX_GI=$HOME/Dropbox/statique/generate_index.py
-  DEFAULT_GI=./defaults/generate_index.py
+  DROPBOX_GI=$DROPBOX_STATIQUE/generate_index.py
+  DEFAULT_GI=$DEFAULT_FOLDER/generate_index.py
 
   if [ -f $DROPBOX_GI ]; then
     cp $DROPBOX_GI .
@@ -30,8 +33,8 @@ build_after_uptodate() {
     cp $DEFAULT_GI .
   fi
 
-  DROPBOX_MD2HTML=$HOME/Dropbox/statique/md2html.sh
-  DEFAULT_MD2HTML=./defaults/md2html.sh
+  DROPBOX_MD2HTML=$DROPBOX_STATIQUE/md2html.sh
+  DEFAULT_MD2HTML=$DEFAULT_FOLDER/md2html.sh
 
   if [ -f $DROPBOX_MD2HTML ]; then
     cp $DROPBOX_MD2HTML .
