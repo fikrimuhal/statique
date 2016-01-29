@@ -11,7 +11,7 @@ build_after_uptodate() {
     sleep 1
   done
   # When it is fully synced, start build.
-  echo "Build now!"
+  echo "Starting build..."
   python build.py
 }
 

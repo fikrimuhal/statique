@@ -1,22 +1,42 @@
+#!/usr/bin/python
+
+"""
+* Generates index.md for each folder recursively
+* Compiles all markdown files into html in the same folder.
+"""
 import os
 import re
 import datetime
 import time
 import subprocess
+import logging
 
 def md2html(dirName, md):
-    subprocess.call(["sh","md2html.sh",dirName, md, md[:-2]+"html"])
+    """
+    Calls markdown to HTML script.
+    """
+    html = md[:-2]+"html"
+    subprocess.call(["sh","md2html.sh",dirName, md, html])
+    if not os.path.exists(os.path.join(dirName, html)):
+        logging.warning("MD2HTML Compilation Error on: %s/%s" %(dirName, md))
 
 def process(rootDir):
+    """
+    Traverses a given path recursively
+        * finds markdown files (pages), other files, subdirectories
+        * for each page, generates html from md
+        * generates an index page for each directory.
+    """
     for dirName, subdirList, fileList in os.walk(rootDir):
         relative_path = dirName[len(rootDir):]
-
         mds = sorted([fname for fname in fileList if fname.endswith(".md") and fname != "index.md" ])
         md_htmls = [fname[:-2]+"html" for fname in mds]
         hidden_files = [fname for fname in fileList if fname.startswith(".")]
         files = sorted(list(set(fileList) - set(mds) - set(["index.md", "index.html"]) - set(md_htmls) - set(hidden_files)))
         subdirs = sorted([dname for dname in subdirList if not dname.startswith(".")])
-        #print('Found directory: %s' % dirName)
+
+        logging.debug('Traversing directory: %s' % dirName)
+
         index_file = os.path.join(dirName, "index.md")
         directory_name = dirName.split("/")[-1].capitalize()
         if fileList or subdirList:
@@ -27,19 +47,42 @@ def process(rootDir):
             md2html(dirName, md)
 
 def generate_breadcrumb(path):
+    """
+    Generates breadcrumb for the given path.
+    """
+    # If empty path given, return empty string.
     if not path:
         return ""
     parts = path.split("/")
+
+    # If it's root, return empty string
     if not parts[0]:
         return ""
+
+    # If it's a regular path, create breadcrumb items
     o = '<ol class="breadcrumb" style="margin-bottom: 5px;">\n'
     for i in xrange(0, len(parts)-1):
         o += '<li><a href="%s">%s</a></li>\n' % ("/"+"/".join(parts[0:i+1]), parts[i])
+
+    # write the last one
     o += '<li class="active"><a href="/%s">%s</a></li>' % (path, parts[-1])
     o += '</ol>'
     return o
 
+
 def write_index(root_dir, index_file, relative_path, directory_name, subdirs, pages, files):
+    """
+    Writes the index.html for the given directory.
+    Suppose we want to generate index for folder /a/b/ch_test/
+    @root_dir: root parent folder name at the top level. Ex: a
+    @index_file: $CONTENT_PATH/a/b/ch_test/index.md
+    @relative_path: /b/ch_test
+    @directory_name: Ch_test
+    @subdirs: subdirectory names under ch_test
+    @pages: markdown files under ch_test
+    @files: other files under ch_test
+    """
+    logging.debug("root_dir: %(root_dir)s\nindex_file: %(index_file)s\nrelative_path: %(relative_path)s\ndirectory_name: %(directory_name)s\nsubdirs: %(subdirs)s" % locals())
     with open(index_file, "w") as index:
         index.write(generate_breadcrumb(root_dir + relative_path))
         if subdirs:
@@ -69,20 +112,21 @@ def write_index(root_dir, index_file, relative_path, directory_name, subdirs, pa
             index.write("</div></div>")
 
 
-def generate_indices():
-    CONTENT_FOLDER = "/tmp/hugo/content"
-    folders = filter(lambda x: x, map(lambda x: x.strip(), open("/tmp/hugo/config/include.txt").read().split("\n")))
+def generate_indices(content_folder):
     # TODO: these are not folders, we should check it.
-
+    folders = os.listdir(content_folder)
     for folder in folders:
-        print("Processing %s..." % folder)
-        process(os.path.join(CONTENT_FOLDER, folder))
+        logging.info("Processing %s..." % folder)
+        process(os.path.join(content_folder, folder))
 
-    main_index_0 = os.path.join(CONTENT_FOLDER, "index.md")
-    write_index("/", main_index_0, "/", "Main Page", folders, None, None)
-    md2html(CONTENT_FOLDER, "index.md")
-    print("generated index.html")
+    main_page = os.path.join(content_folder, "index.md")
+    write_index("/", main_page, "/", "Main Page", folders, None, None)
+    logging.info("Generating index for main page...")
+    md2html(content_folder, "index.md")
+    logging.info("Index generation completed.")
 
 
 if __name__ == "__main__":
-    generate_indices()
+    logging.basicConfig(level=logging.INFO,
+                        format='[%(asctime)s] [%(levelname)s] %(message)s')
+    generate_indices(content_folder = "/tmp/statique/content")

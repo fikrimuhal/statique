@@ -35,7 +35,7 @@ class FullStaticFileHandler < HTTP::StaticFileHandler
         else mime_type(static_path)
         end
         return HTTP::Response.new(200, File.read(static_path), HTTP::Headers{"Content-Type": mimtype})
-      elsif is_running?("build.py")
+      elsif is_running?("python build.py")
         return HTTP::Response.new(200, "Build is about to finish. Please try again later.", HTTP::Headers{"Content-Type":  "text/html"})
       end
     end
