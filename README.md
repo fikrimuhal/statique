@@ -1,36 +1,23 @@
 # Statique - Static Site Server
 
 * Statique is a static site server written with [Crystal language](http://crystal-lang.org/) and [Kemal Web Framework](http://www.kemalcr.com/).
-* It pulls a [Hugo](https://gohugo.io/) site from a git repository, builds it and then serves as a static site.
-* It provides a hook URL so that it can fetch and rebuild the Markdown files of Hugo project upon git push.
+* It watches for changes in your Dropbox folder, then compiles all your Markdown files into HTML with pandoc when any change detected.
+* It provides a hook URL so that it can copy and rebuild the Markdown files upon a change in your Dropbox folder.
 * Access can be restricted with passwords and permissions.
 * Each folder can be assigned special permissions via files in config folder.
-* Sample Hugo site source code can be found [here](https://github.com/fikrimuhal/hugo-sample).
+* Sample Dropbox folder structure can be seen in *sample_dropbox_folder*.
 
 ## Installation
 
-* Create a public/private key pair: id_rsa and id_rsa.pub.
-* Add the public key content to your git repo's Deployment Keys section.
-* Add webhook for your git repo (like /abcd)
-* We will provide webhook, public key, private key, git repo URLs as environment variables.
-
-```bash
-docker build -t fikrimuhal/statique .
-docker run -d -e WEBHOOK_PATH="/abcd" -e PRIVATE_KEY_URL="https://somehost/id_rsa" -e PUBLIC_KEY_URL="https://somehost/id_rsa.pub" -e GIT_REPO="https://github.com/fikrimuhal/hugo-sample" -p 3000:3000 --name statique fikrimuhal/statique
-```
-
-## Usage
-
-Navigate to the server URL. If you are using for the first time, it will fetch git repo, build it and start displaying.
-Sample repo can be navigated starting from the root (/) with admin:admin credentials.
+Read [Installation Docs](docs/Installation.md).
 
 ### Authentication
 
-Passwords are located on [config/passwords.txt](https://github.com/fikrimuhal/hugo-sample/blob/master/config/passwords.txt) file of the hugo project in the username:password format, one at each line.
+Passwords are located on [config/passwords.txt](https://github.com/fikrimuhal/statique/blob/dropbox/sample_dropbox_folder/statique/config/passwords.txt) file of the sample_dropbox_folder/config in the username:password format, one at each line.
 
 ### Authorization
 
-Permissions are located on [config/permissions.yml](https://github.com/fikrimuhal/hugo-sample/blob/master/config/permissions.yml) file of the hugo project.
+Permissions are located on [config/permissions.yml](https://github.com/fikrimuhal/statique/blob/dropbox/sample_dropbox_folder/statique/config/permissions.yml) file of the sample_dropbox_folder/config.
 
 * This file has a tree structure.
 * *root* represents path */*.
@@ -42,12 +29,26 @@ Permissions are located on [config/permissions.yml](https://github.com/fikrimuha
 
 ## Development
 
-If you want to run Statique on your local machine:
+If you want to run Statique on your local machine,
+
+* Make sure you have proper Dropbox/statique/config folder.
+* Checkout code:
 
 ```bash
-git clone http://github.com/fikrimuhal/statique && cd statique
+git clone http://github.com/fikrimuhal/statique && git checkout dropbox && cd statique
 shards install
-crystal build.cr
+```
+
+Use default build scripts to build your Dropbox repository:
+```bash
+sh inotifyrun.sh
+```
+
+* When build is complete, you may Ctrl+C to close it.
+
+* Now you can start Statique server:
+
+```bash
 crystal src/statique.cr
 ```
 
@@ -56,7 +57,6 @@ Navigate to [http://localhost:3000](http://localhost:3000) to see the result. Yo
 
 ## TODO
 
-* Webhook / build for the first time doesn't work on local development.
 * MD5 Hashing for passwords
 * Hook Queue: if another build request comes, do not reject it but put it into the queue. If multiple requests are come, use the last one.
 
