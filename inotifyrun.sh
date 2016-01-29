@@ -33,7 +33,7 @@ build_after_uptodate() {
   DROPBOX_MD2HTML=$HOME/Dropbox/statique/md2html.sh
   DEFAULT_MD2HTML=./defaults/md2html.sh
 
-  if [ -f  ]; then
+  if [ -f $DROPBOX_MD2HTML ]; then
     cp $DROPBOX_MD2HTML .
   elif [ -f $DEFAULT_MD2HTML ]; then
     cp $DEFAULT_MD2HTML .
