@@ -61,7 +61,7 @@ mandatory_paths = (
 for path in mandatory_paths:
     if not os.path.exists(path):
         logging.error("Path doesn't exist: %s\nExiting now." % path)
-        system.exit(-1)
+        sys.exit(-1)
 
 # ====================================
 
@@ -86,7 +86,7 @@ def cp_dropbox_to_content(path):
 
 # Learn which folders to copy for build.
 include_paths = os.path.join(TMP_CONFIG_PATH, "include.txt")
-paths = filter(lambda x: x.strip(), open(include_paths).read().split("\n"))
+paths = sorted(filter(lambda x: x.strip(), open(include_paths).read().split("\n")))
 
 logging.info("Copying these folders in Dropbox to content folder: %s" % ", ".join(paths))
 # Copy those folders to content folder.

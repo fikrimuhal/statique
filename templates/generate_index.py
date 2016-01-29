@@ -114,7 +114,7 @@ def write_index(root_dir, index_file, relative_path, directory_name, subdirs, pa
 
 def generate_indices(content_folder):
     # TODO: these are not folders, we should check it.
-    folders = os.listdir(content_folder)
+    folders = sorted(os.listdir(content_folder))
     for folder in folders:
         logging.info("Processing %s..." % folder)
         process(os.path.join(content_folder, folder))
