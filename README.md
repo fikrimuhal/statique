@@ -1,7 +1,8 @@
 # Statique - Static Site Server
 
 * Statique is a static site server written with [Crystal language](http://crystal-lang.org/) and [Kemal Web Framework](http://www.kemalcr.com/).
-* It watches for changes in your Dropbox folder, then compiles all your Markdown files into HTML with pandoc when any change detected.
+* It compiles the Markdown content in your Dropbox folder into HTML with pandoc every X minutes.
+* (Optional) It watches for changes in your Dropbox folder, then compiles all your Markdown files into HTML with pandoc when any change detected.
 * It provides a hook URL so that it can copy and rebuild the Markdown files upon a change in your Dropbox folder.
 * Access can be restricted with passwords and permissions.
 * Each folder can be assigned special permissions via files in config folder.
@@ -41,7 +42,7 @@ shards install
 
 Use default build scripts to build your Dropbox repository:
 ```bash
-sh inotifyrun.sh
+sh cronjob.sh
 ```
 
 * When build is complete, you may Ctrl+C to close it.
