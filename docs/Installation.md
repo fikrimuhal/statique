@@ -93,19 +93,34 @@ echo 'env WEBHOOK_PATH="/abcd"' | sudo tee --append /etc/init/statique.conf
 ### Testing Build
 
 You may try building your Dropbox files with:
-```
-sh inotifyrun.sh
+
+```bash
+sh cronjob.sh
 ```
 
 configs, templates and scripts under *~/Dropbox/statique/config* will be used.
 
-You may quit when you see the build is complete.
+### Add cron job
+
+With the following command,
+```bash
+crontab -e
+```
+
+Add the following line to run cronjob.sh (build) every 10 minutes.
+
+```
+*/10 * * * * /home/ubuntu/statique/cronjob.sh
+```
+
+cronjob.sh copies build scripts and templates from Dropbox or default folder and then initiates build process.
+
 
 ### Running Statique
 
 ```bash
 cd ~/statique
-./statique.bin
+./statique.bin -p 3000
 ```
 
 You can navigate to :3000 of your server to see the web page. It will ask for password, use **admin** as *username*, **admin** as *password*.
@@ -116,6 +131,18 @@ You may want to use upstart to run Statique (statique.bin) as service:
 
 ```bash
 sudo service statique start
-````
+```
 
-**statique-notify** service runs inotifyrun.sh. It will automatically start when you start statique (with command above).
+It will run on 80 port.
+
+### Dropbox Watcher (OPTIONAL)
+
+You may watch your Dropbox folder and upon any change, trigger a build: build.py:
+
+```bash
+sh inotifyrun.sh
+```
+
+
+You can use **statique-notify** service (which runs inotifyrun.sh).
+Note that watching Dropbox folder might require lots of resources depending on the number of files in it.

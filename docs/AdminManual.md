@@ -6,7 +6,9 @@
 
 * **statique service:** static file web server. Requires passwords.txt, permissions.yml
 
-* **statique-notify service:** watches for changes in Dropbox, starts build.py when change detected.
+* **statique-notify service:** watches for changes in Dropbox, starts build.py when change detected. (OPTIONAL)
+
+Recommended approach: use crontab to build every X minutes to save resources.
 
 ### Scripts
 
@@ -32,3 +34,5 @@
   * md2html.sh
 * If no custom files (other than config) provided, they will be copied from *sample_dropbox_folder*.
 * Providing config folder with *include.txt, passwords.txt, permissions.yml* is **mandatory**.
+
+**Warning:** Be careful to provide a valid YAML File for permissions.yml.
