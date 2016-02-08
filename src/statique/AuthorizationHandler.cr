@@ -47,9 +47,12 @@ class AuthorizationHandler < HTTP::Handler
   end
 
   def authorized?(path : String, username : String)
-    return true if path == "/"
+    begin
+      permissions = YAML.load(File.read(@permissions_file as String)) as Hash
+    rescue
+      return :invalid_permissions_file
+    end
 
-    permissions = YAML.load(File.read(@permissions_file as String)) as Hash
     items = path.split("/")
     items[0] = "root"
     authorized = has_access?(permissions, items, username)
@@ -59,14 +62,19 @@ class AuthorizationHandler < HTTP::Handler
   # if the user has the permission to see the page, show it.
   # else 403.
   def call(request)
+    return call_next(request) if request.path == "/"
     request_path = request.path.not_nil!.gsub("%20"," ")
     request.path = request_path
     value = request.headers[AUTH]?
     # value.try &.size
     if value && value.size > 0 && value.starts_with?(BASIC)
       username, password = Base64.decode_string(value[BASIC.size + 1..-1]).split(":")
+
+      result = authorized?(request_path, username)
       # We know that the password matches, look for authorization.
-      if authorized?(request_path, username)
+      if result == :invalid_permissions_file
+        return HTTP::Response.new(500, "Invalid YAML file: permissions.yml")
+      elsif result
         # if authorized, call next.
         return call_next(request)
       else
