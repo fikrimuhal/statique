@@ -53,14 +53,7 @@ build_after_uptodate() {
   echo "Build finished." >> /home/ubuntu/log/statique.log
 }
 
+python $HOME/dropbox.py start
 build_after_uptodate
-
-WATCHFOR=$HOME/Dropbox${DROPBOX_DOCS_REL_PATH:-}
-
-while true #run indefinitely
-do
-  if [ -d $WATCHFOR ]; then
-    # if Dropbox folder exists, start waiting for any changes. When change detected, start wait&build process.
-    inotifywait -r -e modify,attrib,close_write,move,create,delete $WATCHFOR && build_after_uptodate
-  fi
-done
+TIMESTAMP=$(date -u)
+echo $TIMESTAMP >> /home/ubuntu/log/cronjob.log
