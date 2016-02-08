@@ -40,12 +40,13 @@ git clone http://github.com/fikrimuhal/statique && git checkout dropbox && cd st
 shards install
 ```
 
-Use default build scripts to build your Dropbox repository:
+Use the default build script to build your Dropbox repository:
+
 ```bash
 sh cronjob.sh
 ```
 
-* When build is complete, you may Ctrl+C to close it.
+This will generate html files inside ~/statique/public folder. 
 
 * Now you can start Statique server:
 
