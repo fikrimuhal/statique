@@ -110,7 +110,7 @@ crontab -e
 Add the following line to run cronjob.sh (build) every 10 minutes.
 
 ```
-*/10 * * * * /home/ubuntu/statique/cronjob.sh
+*/10 * * * * cd /home/ubuntu/statique/&&/home/ubuntu/statique/cronjob.sh
 ```
 
 cronjob.sh copies build scripts and templates from Dropbox or default folder and then initiates build process.
